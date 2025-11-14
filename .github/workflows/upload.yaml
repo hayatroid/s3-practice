@@ -1,0 +1,25 @@
+name: Upload to s3
+
+on:
+  workflow_dispatch:
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: aws-actions/configure-aws-credentials@v5
+        with:
+          aws-region: us-east-1
+          role-to-assume: arn:aws:iam::529088289120:role/role-for-s3-practice
+
+      - run: |
+          FILENAME="$(uuidgen).txt"
+          echo "Hello from GitHub Actions!" > "$FILENAME"
+          aws s3 cp "$FILENAME" s3://hayatroid/bucket-for-s3-practice/
